@@ -1,51 +1,82 @@
-let users = JSON.parse(localStorage.getItem("users")) || [
-    {user:"admin", pass:"admin123", role:"admin"}
-];
+// USERS
+let users = JSON.parse(localStorage.getItem("users")) || [];
 
+// Always make sure Admin account exists
+if (!users.some(x => x.user === "admin")) {
+    users.unshift({
+        user: "admin",
+        pass: "admin123",
+        role: "admin"
+    });
+    localStorage.setItem("users", JSON.stringify(users));
+}
+
+// EXPENSES
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
 let currentUser = "";
 
+// SHOW MODULE
 function show(id) {
     document.querySelectorAll(".container > div").forEach(x =>
         x.classList.add("hide")
     );
+
     document.getElementById(id).classList.remove("hide");
 }
 
 // SIGNUP
 function signup() {
-    let u = signUser.value;
-    let p = signPass.value;
+
+    let u = document.getElementById("signUser").value.trim();
+    let p = document.getElementById("signPass").value.trim();
 
     if (!u || !p) {
-        signMsg.innerText = "Enter all details";
+        document.getElementById("signMsg").innerText =
+            "Enter all details";
         return;
     }
 
     if (users.some(x => x.user === u)) {
-        signMsg.innerText = "User already exists";
+        document.getElementById("signMsg").innerText =
+            "User already exists";
         return;
     }
 
-    users.push({user:u, pass:p, role:"user"});
+    users.push({
+        user: u,
+        pass: p,
+        role: "user"
+    });
+
     localStorage.setItem("users", JSON.stringify(users));
 
-    signMsg.innerText = "Signup successful!";
+    document.getElementById("signMsg").innerText =
+        "Signup successful!";
+
+    document.getElementById("signUser").value = "";
+    document.getElementById("signPass").value = "";
 }
 
 // LOGIN
 function login() {
-    let u = loginUser.value;
-    let p = loginPass.value;
 
-    let found = users.find(x => x.user === u && x.pass === p);
+    let u = document.getElementById("loginUser").value.trim();
+    let p = document.getElementById("loginPass").value.trim();
+
+    let found = users.find(x =>
+        x.user === u && x.pass === p
+    );
 
     if (!found) {
-        loginMsg.innerText = "Invalid username or password";
+        document.getElementById("loginMsg").innerText =
+            "Invalid username or password";
         return;
     }
 
     currentUser = u;
+
+    document.getElementById("loginMsg").innerText = "";
 
     if (found.role === "admin") {
         show("admin");
@@ -58,12 +89,14 @@ function login() {
 
 // ADD EXPENSE
 function addExpense() {
-    let d = desc.value;
-    let a = Number(amount.value);
-    let n = Number(people.value);
 
-    if (!d || !a || !n) {
-        result.innerText = "Enter all details";
+    let d = document.getElementById("desc").value.trim();
+    let a = Number(document.getElementById("amount").value);
+    let n = Number(document.getElementById("people").value);
+
+    if (!d || !a || !n || n <= 0) {
+        document.getElementById("result").innerText =
+            "Enter valid details";
         return;
     }
 
@@ -77,60 +110,86 @@ function addExpense() {
         share: share
     });
 
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+    localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+    );
 
-    result.innerText = "Each person pays ₹" + share;
+    document.getElementById("result").innerText =
+        "Each person pays ₹" + share;
 
-    desc.value = "";
-    amount.value = "";
-    people.value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("amount").value = "";
+    document.getElementById("people").value = "";
 
     loadExpenses();
 }
 
 // USER EXPENSES
 function loadExpenses() {
-    expenseList.innerHTML = "";
+
+    let list = document.getElementById("expenseList");
+
+    list.innerHTML = "";
 
     expenses
-    .filter(x => x.user === currentUser)
-    .forEach((x, i) => {
-        expenseList.innerHTML += `
-            <div>
-                <b>${x.desc}</b><br>
-                Amount: ₹${x.amount}<br>
-                Each Person: ₹${x.share}
-            </div>
-        `;
-    });
+        .filter(x => x.user === currentUser)
+        .forEach(x => {
+
+            list.innerHTML += `
+                <div>
+                    <b>${x.desc}</b><br>
+                    Amount: ₹${x.amount}<br>
+                    People: ${x.people}<br>
+                    Each Person: ₹${x.share}
+                </div>
+            `;
+        });
 }
 
 // ADMIN DASHBOARD
 function loadAdmin() {
 
-    users.innerHTML = usersList = "";
+    let userBox = document.getElementById("users");
+    let expenseBox = document.getElementById("allExpenses");
 
-    users.innerHTML = usersList =
-        users.map(x => `<div>${x.user} - ${x.role}</div>`).join("");
+    userBox.innerHTML = users.map(x =>
+        `<div>${x.user} - ${x.role}</div>`
+    ).join("");
 
-    allExpenses.innerHTML =
-        expenses.map((x, i) => `
-            <div>
-                ${x.user} - ${x.desc} - ₹${x.amount}
-                <button onclick="deleteExpense(${i})">Delete</button>
-            </div>
-        `).join("");
+    expenseBox.innerHTML = expenses.map((x, i) =>
+        `
+        <div>
+            ${x.user} - ${x.desc} - ₹${x.amount}
+            <button onclick="deleteExpense(${i})">
+                Delete
+            </button>
+        </div>
+        `
+    ).join("");
 }
 
 // DELETE EXPENSE
 function deleteExpense(i) {
+
     expenses.splice(i, 1);
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+
+    localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+    );
+
     loadAdmin();
 }
 
 // LOGOUT
 function logout() {
+
     currentUser = "";
+
+    document.getElementById("loginUser").value = "";
+    document.getElementById("loginPass").value = "";
+    document.getElementById("loginMsg").innerText = "";
+
     show("login");
 }
