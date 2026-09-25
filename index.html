@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SplitMate - Expense Sharing</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LOGIN -->
+    <div id="login" class="box">
+        <h1>SplitMate</h1>
+        <h2>Login</h2>
+
+        <input id="loginUser" placeholder="Username">
+        <input id="loginPass" type="password" placeholder="Password">
+
+        <button onclick="login()">Login</button>
+        <button class="link" onclick="show('signup')">Create Account</button>
+        <p id="loginMsg"></p>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signup" class="box hide">
+        <h1>SplitMate</h1>
+        <h2>Signup</h2>
+
+        <input id="signUser" placeholder="Username">
+        <input id="signPass" type="password" placeholder="Password">
+
+        <button onclick="signup()">Signup</button>
+        <button class="link" onclick="show('login')">Back to Login</button>
+        <p id="signMsg"></p>
+    </div>
+
+    <!-- USER MODULE -->
+    <div id="user" class="hide">
+        <h1>👤 User Dashboard</h1>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Add Expense</h2>
+                <input id="desc" placeholder="Expense description">
+                <input id="amount" type="number" placeholder="Amount">
+                <input id="people" type="number" placeholder="Number of people">
+
+                <button onclick="addExpense()">Add Expense</button>
+                <p id="result"></p>
+            </div>
+
+            <div class="card">
+                <h2>My Expenses</h2>
+                <div id="expenseList"></div>
+            </div>
+        </div>
+
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- ADMIN MODULE -->
+    <div id="admin" class="hide">
+        <h1>🛠 Admin Dashboard</h1>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Registered Users</h2>
+                <div id="users"></div>
+            </div>
+
+            <div class="card">
+                <h2>All Expenses</h2>
+                <div id="allExpenses"></div>
+            </div>
+        </div>
+
+        <button onclick="logout()">Logout</button>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
